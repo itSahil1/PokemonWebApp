@@ -90,7 +90,7 @@ export default function SearchAndFilters({ isFilterPanelVisible, toggleFilterPan
           {pokemonTypes.map(type => (
             <button 
               key={type}
-              className={`px-3 py-1.5 rounded-full text-sm font-roboto-condensed font-semibold text-white bg-${type} hover:bg-opacity-90 transition-colors duration-200 ${selectedTypes.includes(type) ? 'ring-2 ring-offset-2 ring-gray-500' : ''}`}
+              className={`px-3 py-1.5 rounded-full text-sm font-roboto-condensed font-semibold text-grey bg-${type} hover:bg-opacity-90 transition-colors duration-200 ${selectedTypes.includes(type) ? 'ring-2 ring-offset-2 ring-gray-500' : ''}`}
               onClick={() => handleTypeToggle(type)}
             >
               {type}

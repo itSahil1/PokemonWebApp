@@ -3,6 +3,8 @@ import { usePokemonData } from '../hooks/usePokemonData';
 
 const PokemonContext = createContext();
 
+
+
 export function PokemonProvider({ children }) {
   // Search and filtering state
   const [searchTerm, setSearchTerm] = useState('');
