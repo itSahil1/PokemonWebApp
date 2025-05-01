@@ -10,11 +10,12 @@ export function usePokemonData() {
   const [error, setError] = useState(null);
   
   // Fetch a list of all pokemon
-  const fetchAllPokemon = useCallback(async (limit = 1000, offset = 0) => {
+  const fetchAllPokemon = useCallback(async (limit = 100, offset = 0) => {
     setIsLoading(true);
     setError(null);
     
     try {
+      console.log('Fetching Pokemon list...');
       const response = await fetch(`${API_BASE_URL}/pokemon?limit=${limit}&offset=${offset}`);
       
       if (!response.ok) {
@@ -24,15 +25,27 @@ export function usePokemonData() {
       const data = await response.json();
       setTotalPokemon(data.count);
       
-      // Fetch detailed data for each pokemon
-      const detailedPokemonList = await Promise.all(
-        data.results.map(pokemon => fetchPokemonByUrl(pokemon.url))
-      );
+      console.log(`Fetching details for ${data.results.length} Pokemon...`);
       
-      setPokemonList(detailedPokemonList.filter(Boolean));
+      // Fetch detailed data for each pokemon - but limit the number of concurrent requests
+      const detailedPokemonList = [];
+      const batchSize = 20; // Process in smaller batches to avoid overwhelming the API
+      
+      for (let i = 0; i < data.results.length; i += batchSize) {
+        const batch = data.results.slice(i, i + batchSize);
+        const batchResults = await Promise.all(
+          batch.map(pokemon => fetchPokemonByUrl(pokemon.url))
+        );
+        detailedPokemonList.push(...batchResults.filter(Boolean));
+      }
+      
+      console.log(`Successfully loaded ${detailedPokemonList.length} Pokemon`);
+      setPokemonList(detailedPokemonList);
     } catch (err) {
       setError(err.message);
       console.error('Error fetching Pokémon list:', err);
+      // Even if there's an error, we should stop the loading state
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
@@ -126,16 +139,31 @@ export function usePokemonData() {
     setError(null);
     
     try {
-      // First, get the species data which contains the evolution chain URL
-      const pokemonData = await fetchPokemonById(pokemonId);
+      console.log(`Fetching evolution chain for Pokemon #${pokemonId}...`);
       
-      if (!pokemonData || !pokemonData.species) {
+      // First, get the species data which contains the evolution chain URL
+      const pokemonResponse = await fetch(`${API_BASE_URL}/pokemon/${pokemonId}`);
+      
+      if (!pokemonResponse.ok) {
+        throw new Error(`Failed to fetch Pokémon data: ${pokemonResponse.status}`);
+      }
+      
+      const pokemonData = await pokemonResponse.json();
+      
+      if (!pokemonData || !pokemonData.species || !pokemonData.species.url) {
         throw new Error('Pokémon species data not available');
       }
       
-      const speciesData = await fetchSpeciesData(pokemonData.species.url);
+      // Get species data directly
+      const speciesResponse = await fetch(pokemonData.species.url);
       
-      if (!speciesData || !speciesData.evolution_chain) {
+      if (!speciesResponse.ok) {
+        throw new Error(`Failed to fetch species data: ${speciesResponse.status}`);
+      }
+      
+      const speciesData = await speciesResponse.json();
+      
+      if (!speciesData || !speciesData.evolution_chain || !speciesData.evolution_chain.url) {
         throw new Error('Evolution chain data not available');
       }
       
@@ -152,35 +180,45 @@ export function usePokemonData() {
       const chain = [];
       let currentStage = evolutionData.chain;
       
-      while (currentStage) {
-        const speciesName = currentStage.species.name;
-        
-        // Get the species details to get the Pokémon ID
-        const speciesDetails = await fetch(`${API_BASE_URL}/pokemon-species/${speciesName}`);
-        const speciesJson = await speciesDetails.json();
-        
-        // Get the default variety of the species to get the Pokémon ID
-        const defaultVarietyUrl = speciesJson.varieties.find(v => v.is_default).pokemon.url;
-        const pokemonResponse = await fetch(defaultVarietyUrl);
-        const pokemonJson = await pokemonResponse.json();
-        
-        // Add to the chain
-        chain.push({
-          id: pokemonJson.id,
-          name: speciesName,
-          min_level: currentStage.evolution_details[0]?.min_level || null,
-          trigger: currentStage.evolution_details[0]?.trigger?.name || null,
-          item: currentStage.evolution_details[0]?.item?.name || null,
-        });
-        
-        // Move to the next evolution
-        if (currentStage.evolves_to.length > 0) {
-          currentStage = currentStage.evolves_to[0];
-        } else {
-          currentStage = null;
+      try {
+        while (currentStage && currentStage.species) {
+          const speciesName = currentStage.species.name;
+          
+          // Get the species details to get the Pokémon ID
+          const speciesDetails = await fetch(`${API_BASE_URL}/pokemon-species/${speciesName}`);
+          const speciesJson = await speciesDetails.json();
+          
+          if (speciesJson.varieties && speciesJson.varieties.length > 0) {
+            // Find the default variety
+            const defaultVariety = speciesJson.varieties.find(v => v.is_default);
+            if (defaultVariety && defaultVariety.pokemon && defaultVariety.pokemon.url) {
+              const pokemonResponse = await fetch(defaultVariety.pokemon.url);
+              const pokemonJson = await pokemonResponse.json();
+              
+              // Add to the chain
+              chain.push({
+                id: pokemonJson.id,
+                name: speciesName,
+                min_level: currentStage.evolution_details[0]?.min_level || null,
+                trigger: currentStage.evolution_details[0]?.trigger?.name || null,
+                item: currentStage.evolution_details[0]?.item?.name || null,
+              });
+            }
+          }
+          
+          // Move to the next evolution
+          if (currentStage.evolves_to && currentStage.evolves_to.length > 0) {
+            currentStage = currentStage.evolves_to[0];
+          } else {
+            currentStage = null;
+          }
         }
+      } catch (chainErr) {
+        console.error('Error processing evolution chain:', chainErr);
+        // Continue with whatever chain data we have so far
       }
       
+      console.log(`Successfully fetched evolution chain with ${chain.length} stages`);
       return chain;
     } catch (err) {
       setError(err.message);
@@ -189,7 +227,7 @@ export function usePokemonData() {
     } finally {
       setIsLoading(false);
     }
-  }, [fetchPokemonById, fetchSpeciesData]);
+  }, []);
   
   // Fetch all pokemon types
   const fetchAllPokemonTypes = useCallback(async () => {

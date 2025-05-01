@@ -1,12 +1,34 @@
+import { useState, useEffect } from 'react';
+
 export default function LoadingSpinner() {
+  const [showMessage, setShowMessage] = useState(false);
+  
+  // Show additional message if loading takes more than 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowMessage(true);
+    }, 5000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-4 rounded-full">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-4 rounded-full mb-4">
         <svg className="spin-animation h-10 w-10 text-pokered" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
       </div>
+      
+      {showMessage && (
+        <div className="bg-white p-4 rounded-lg text-center max-w-md">
+          <p className="text-gray-800">Loading Pokémon data from PokeAPI. This may take a moment...</p>
+          <p className="text-sm text-gray-500 mt-2">
+            We're fetching data for multiple Pokémon. Thank you for your patience!
+          </p>
+        </div>
+      )}
     </div>
   );
 }
