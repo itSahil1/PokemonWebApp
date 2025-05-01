@@ -1,0 +1,86 @@
+📌 Project Title: Advanced Pokémon Explorer WebApp
+📚 Description:
+This is a two-round assignment project developed as a single, fully responsive web application using ReactJS (NO Next.js, TypeScript, or any other frameworks/languages allowed).
+
+✅ Technologies Used (Strictly Enforced)
+ReactJS (with functional components & Hooks)
+
+React Router DOM (for navigation)
+
+Vite (for bundling)
+
+JavaScript (ES6+)
+
+CSS (custom or modular)
+
+No TypeScript or Next.js
+
+No external UI libraries (like MUI, Chakra, Bootstrap, Tailwind, etc.)
+
+Fully Responsive (works well on mobile, tablet, and desktop)
+
+🧩 Assignment 1 – Basic Pokémon Explorer
+✨ Features Implemented:
+Pokémon List View
+
+Fetches Pokémon data from PokéAPI
+
+Displays Pokémon cards with images and types
+
+Search Functionality
+
+Real-time search by name
+
+Type Filter
+
+Filter Pokémon by selecting a type
+
+Error Handling
+
+Displays messages when data fails to load
+
+Loading Spinner
+
+Shows a spinner while data is being fetched
+
+🚀 Assignment 2 – Advanced Features Added
+🔄 Enhanced List View:
+Pagination: Supports 10, 20, or 50 Pokémon per page
+
+Sorting: Sort Pokémon by ID or name (alphabetically)
+
+Multi-type Filtering: Filter Pokémon by selecting multiple types
+
+📋 Detailed Pokémon View:
+View full stats (HP, Attack, Defense, etc.)
+
+List of abilities and moves
+
+Complete evolution chain
+
+Navigation handled using React Router with dynamic routes
+
+⭐ Favorites System:
+Mark/unmark Pokémon as favorites
+
+View favorites list on a separate route
+
+Persist favorite Pokémon using localStorage
+
+🔧 Advanced Features:
+Compare Pokémon: Select two Pokémon and compare their stats side by side
+
+Random Pokémon: Button to load a random Pokémon's detail page
+
+Error Boundaries: Prevent full app crashes on unexpected issues
+
+🧠 Technical Best Practices:
+React Context API used for global state (favorites, Pokémon data)
+
+Used custom hooks (useFetchPokemon, useLocalStorage, etc.)
+
+Applied performance optimizations with useMemo, useCallback
+
+Project follows a clean file structure (components, contexts, hooks, pages, etc.)
+
+Fully mobile-friendly and responsive UI using pure CSS
