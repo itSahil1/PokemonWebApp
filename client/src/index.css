@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500&family=Roboto+Condensed:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-roboto antialiased bg-pokelightgray text-pokedarkgray;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-poppins;
+  }
+}
+
+@layer components {
+  /* Type badge components */
+  .type-badge {
+    @apply px-2 py-1 rounded-full text-xs font-roboto-condensed font-semibold text-white;
+  }
+  
+  .type-normal { @apply bg-normal; }
+  .type-fire { @apply bg-fire; }
+  .type-water { @apply bg-water; }
+  .type-electric { @apply bg-electric; }
+  .type-grass { @apply bg-grass; }
+  .type-ice { @apply bg-ice; }
+  .type-fighting { @apply bg-fighting; }
+  .type-poison { @apply bg-poison; }
+  .type-ground { @apply bg-ground; }
+  .type-flying { @apply bg-flying; }
+  .type-psychic { @apply bg-psychic; }
+  .type-bug { @apply bg-bug; }
+  .type-rock { @apply bg-rock; }
+  .type-ghost { @apply bg-ghost; }
+  .type-dragon { @apply bg-dragon; }
+  .type-dark { @apply bg-dark; }
+  .type-steel { @apply bg-steel; }
+  .type-fairy { @apply bg-fairy; }
+  
+  /* Stats bar animation */
+  @keyframes fill {
+    0% { width: 0; }
+    100% { width: 100%; }
+  }
+  
+  .stat-fill {
+    animation: fill 1s ease-out forwards;
+  }
+  
+  /* Spinner animation */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .spin-animation {
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+}
+
+@layer utilities {
+  /* These utility classes are now handled directly by Tailwind */
+  
+  .hover-scale {
+    @apply transition-transform hover:scale-105 duration-200;
+  }
+  
+  .card-shadow {
+    @apply shadow-md hover:shadow-lg;
+  }
+}
