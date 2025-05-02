@@ -6,16 +6,18 @@ A web application for tracking Pokémon mastery progress. Built with React and V
 
 - View and manage Pokémon list
 - Track caught or mastered Pokémon
-- Fast and responsive UI using Vite + React
+- Fast and responsive UI using Vite + React + SHADCNUI
 - Clean code structure with module aliasing
 
 ## 🛠️ Tech Stack
 
 - ⚛️ React
 - ⚡ Vite
-- 🎨 TailwindCSS (if used)
-- 🗃️ (Optional) Node.js + Express (if backend is included)
-- 📁 Module Aliases via Vite config
+- 🎨 TailwindCSS
+-    TypeScript
+-    Shadcn UI
+-    React Router
+  
 
 Demo link-> https://pokie55.netlify.app/
 
